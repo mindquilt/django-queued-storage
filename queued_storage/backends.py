@@ -185,8 +185,6 @@ class QueuedStorage(object):
         :type content: :class:`~django:django.core.files.File`
         :rtype: str
         """
-        cache_key = self.get_cache_key(name)
-        cache.set(cache_key, False)
 
         # Use a name that is available on both the local and remote storage
         # systems and save locally.
@@ -196,6 +194,9 @@ class QueuedStorage(object):
         except TypeError:
             # Django < 1.10
             name = self.local.save(name, content)
+
+        cache_key = self.get_cache_key(name)
+        cache.set(cache_key, False)
 
         # Pass on the cache key to prevent duplicate cache key creation,
         # we save the result in the storage to be able to test for it
